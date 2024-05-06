@@ -47,5 +47,6 @@ def spin():
     conn.close()
     return jsonify({'employee_id': employee_id})
 
+
 if __name__ == '__main__':
     app.run(debug=True)
