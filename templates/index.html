@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Employee ID Slot Game</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script>
+    $(document).ready(function () {
+      $('#spin-btn').click(function () {
+        console.log("Retrieved employee ID:");
+        $.get('/spin', function (data) {
+            console.log("Retrieved employee ID");
+          
+            var employeeId = data.employee_id;
+            console.log("Retrieved employee ID:", employeeId);
+
+            var digits = employeeId.split('');
+            console.log("digit ID:", digits);
+
+
+            // Loop through each digit and populate the corresponding value box
+            digits.forEach(function (digit, index) {
+              console.log("Updating value box:", index, digit);
+              $('.value-box:eq(' + index + ')').text(digit);
+            });
+
+            $('#myModal').modal('show');
+          
+        });
+      });
+    });
+  </script>
+  <style>
+    .value-box {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 40px;
+      height: 40px;
+      border: 1px solid black;
+      margin: 5px;
+      font-size: 24px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="text-center">
+          <h1>Employee ID Slot Game</h1>
+          <div class="d-flex justify-content-center align-items-center">
+            <div class="value-box">
+                
+            </div>
+            <div class="value-box">
+
+            </div>
+            <div class="value-box">
+
+            </div>
+          </div>
+          <h5>Click "Spin"</h5>
+          <button id="spin-btn" class="btn btn-primary mt-3">Spin</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="myModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Employee ID</h4>
+          <button type="button" class="close" data-dismiss="modal">×</button>
+        </div>
+        <div class="modal-body">
+          <h1 class="text-center" id="employee-id-modal"></h1>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>
