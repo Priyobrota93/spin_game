@@ -1,51 +1,54 @@
-from flask import Flask, render_template, jsonify
 import psycopg2
-import random
+from flask import Flask, render_template, jsonify
 
 app = Flask(__name__)
 
-# Establish connection parameters
 DB_NAME = 'attend'
 DB_USER = 'openpg'
 DB_PASSWORD = 'openpgpwd'
 DB_HOST = 'localhost'
+DB_PORT = '5432'
 
-# Function to connect to the PostgreSQL database
-def get_connection():
-    try:
-        conn = psycopg2.connect(
-            dbname=DB_NAME,
-            user=DB_USER,
-            password=DB_PASSWORD,
-            host=DB_HOST
-        )
-        return conn
-    except Exception as e:
-        print(f"Database connection error: {e}")
-        return None
+
+conn = psycopg2.connect(
+    dbname=DB_NAME,
+    user=DB_USER,
+    password=DB_PASSWORD,
+    host=DB_HOST,
+    port=DB_PORT
+)
+cur = conn.cursor()
+
+last_3_ids = []
+def fetch_random_employee_id():
+    global last_3_ids
+    if last_3_ids:
+        cur.execute("SELECT employee_id FROM \"user\" WHERE employee_id NOT IN %s ORDER BY RANDOM() LIMIT 1", (tuple(last_3_ids),))
+    else:
+        cur.execute("SELECT employee_id FROM \"user\" ORDER BY RANDOM() LIMIT 1")
+    employee_id = cur.fetchone()[0]
+
+    # Update
+    last_3_ids.append(employee_id)
+    if len(last_3_ids) > 3:
+        last_3_ids.pop(0)
+
+    return employee_id
 
 @app.route('/')
 def index():
     return render_template('index.html')
 
-@app.route('/spin')
+
+@app.route('/spin', methods=['GET'])
 def spin():
-    conn = get_connection()
-    if conn is None:
-        return jsonify({'error': 'Database connection failed.'})
-
     try:
-        cursor = conn.cursor()
-        cursor.execute("SELECT employee_id FROM \"user\" ORDER BY RANDOM() LIMIT 1;")
-        employee_id = cursor.fetchone()[0]
-        cursor.close()
-        conn.commit()
+        employee_id = fetch_random_employee_id()
+        digits = [int(digit) for digit in str(employee_id)]
+        return jsonify(success=True, digits=digits, employee_id=employee_id)
+    
     except Exception as e:
-        print(f"Database operation error: {e}")
-        return jsonify({'error': 'An error occurred.'})
-
-    conn.close()
-    return jsonify({'employee_id': employee_id})
+        return jsonify(success=False, error=str(e))
 
 
 if __name__ == '__main__':

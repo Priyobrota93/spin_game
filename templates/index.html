@@ -5,90 +5,94 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Employee ID Slot Game</title>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script>
-    $(document).ready(function () {
-      $('#spin-btn').click(function () {
-        console.log("Retrieved employee ID:");
-        $.get('/spin', function (data) {
-            console.log("Retrieved employee ID");
-          
-            var employeeId = data.employee_id;
-            console.log("Retrieved employee ID:", employeeId);
-
-            var digits = employeeId.split('');
-            console.log("digit ID:", digits);
-
-
-            // Loop through each digit and populate the corresponding value box
-            digits.forEach(function (digit, index) {
-              console.log("Updating value box:", index, digit);
-              $('.value-box:eq(' + index + ')').text(digit);
-            });
-
-            $('#myModal').modal('show');
-          
-        });
-      });
-    });
-  </script>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <style>
+
     .value-box {
       display: flex;
       justify-content: center;
       align-items: center;
-      width: 40px;
-      height: 40px;
+      width: 80px;
+      height: 80px;
       border: 1px solid black;
       margin: 5px;
-      font-size: 24px;
+      font-size: 36px;
+      font-weight: bold;
+      color: #A91D3A;
+      
     }
   </style>
 </head>
 
 <body>
-  <div class="container mt-5">
-    <div class="row justify-content-center">
-      <div class="col-md-6">
-        <div class="text-center">
-          <h1>Employee ID Slot Game</h1>
-          <div class="d-flex justify-content-center align-items-center">
-            <div class="value-box">
-                
-            </div>
-            <div class="value-box">
+  <div class="container mt-5 justify-content-center">
 
-            </div>
-            <div class="value-box">
 
-            </div>
-          </div>
-          <h5>Click "Spin"</h5>
-          <button id="spin-btn" class="btn btn-primary mt-3">Spin</button>
+    <div class="row mb-3">
+      <div class="col-md-12 text-center">
+        <h1>Raffel Draw</h1>
+        <div class="d-flex justify-content-center align-items-center">
+          <div class="value-box" id="digit-boxes1" ></div>
+          <div class="value-box" id="digit-boxes2"></div>
+          <div class="value-box" id="digit-boxes3"></div>
         </div>
+
+        <h5 style="margin-top: 20px;">Click "Spin"</h5>
+        <button id="spin-btn" class="btn btn-primary">Spin</button>
       </div>
     </div>
   </div>
 
-  <div class="modal fade" id="myModal">
-    <div class="modal-dialog">
+  <div class="modal fade" id="employeeModal" tabindex="-1" role="dialog" aria-labelledby="employeeModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h4 class="modal-title">Employee ID</h4>
-          <button type="button" class="close" data-dismiss="modal">×</button>
+          <h5 class="modal-title" id="employeeModalLabel">Employee ID</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
         </div>
         <div class="modal-body">
-          <h1 class="text-center" id="employee-id-modal"></h1>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+          <h1 class="text-center" id="full-employee-id"></h1>
         </div>
       </div>
     </div>
   </div>
 
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script>
+    $(document).ready(function () {
+      $('#spin-btn').click(function () {
+        $.ajax({
+          url: '/spin',
+          type: 'GET',
+          success: function (response) {
+            if (response.success) {
+              var fullValue = response.digits; 
+              $('#digit-boxes1').text(fullValue[0]);
+              $('#digit-boxes2').text(fullValue[1]);
+              $('#digit-boxes3').text(fullValue[2]);
+             
+              $('#full-employee-id').text(response.employee_id+index);
+              $('#employeeModal').modal('show');
+            } else {
+              alert('Error: ' + response.error);
+            }
+          },
+          error: function (xhr, status, error) {
+            alert('Error: ' + error);
+          }
+        });
+      });
+    });
+
+  </script>
+
 </body>
 
 </html>
+
+
+
