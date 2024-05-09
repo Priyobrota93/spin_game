@@ -1,4 +1,5 @@
 import psycopg2
+import random
 from flask import Flask, render_template, jsonify
 
 app = Flask(__name__)

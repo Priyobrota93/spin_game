@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Raffle Draw</title>
+<style>
+    .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
+
+    .box {
+        width: 100px;
+        height: 100px;
+        border: 1px solid black;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 24px;
+        margin: 0 10px;
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="box" id="box1">0</div>
+    <div class="box" id="box2">0</div>
+    <div class="box" id="box3">0</div>
+</div>
+
+
+<script>
+    // Function to generate a random number between 0 and 9
+    function getRandomNumber() {
+        return Math.floor(Math.random() * 10);
+    }
+
+
+    // Function to update box content with a random number
+    function updateBoxContent() {
+        document.getElementById("box1").innerText = getRandomNumber();
+        document.getElementById("box2").innerText = getRandomNumber();
+        document.getElementById("box3").innerText = getRandomNumber();
+    }
+
+
+    // Function to start the raffle draw
+    function startRaffle() {
+        let finalNumbers;
+        updateBoxContent();
+        interval = setInterval(updateBoxContent, 100);
+        setTimeout(() => {
+            clearInterval(interval);
+            finalNumbers = [
+                document.getElementById("box1").innerText,
+                document.getElementById("box2").innerText,
+                document.getElementById("box3").innerText
+            ];
+            setTimeout(() => {
+                const winningMessage = `The winning numbers are: ${finalNumbers.join(', ')}`;
+                alert(winningMessage);
+            }, 200); // Delay alert to ensure the last numbers are displayed
+        }, 10000); // 30 seconds
+    }
+
+
+    // Start the raffle draw
+    startRaffle();
+</script>
+</body>
+</html>
